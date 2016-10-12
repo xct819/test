@@ -1,0 +1,9 @@
+/bootstrap/cache/.
+/storage/app/.
+/storage/framework/.
+/storage/logs/.
+/vendor
+/public/css
+/public/js
+/.idea
+.env
