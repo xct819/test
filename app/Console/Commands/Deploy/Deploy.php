@@ -63,7 +63,7 @@ class Deploy extends Command
             exec('composer dump-autoload');
 
             $this->info('Execute migration rollback');
-            Artisan::call('migrate');
+            Artisan::call('migrate:rollback');
         } else {
             $this->info('Caching routes, providers');
             Artisan::call('route:cache');
