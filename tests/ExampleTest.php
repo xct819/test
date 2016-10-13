@@ -15,7 +15,7 @@ class ExampleTest extends TestCase
     {
         $this->json('GET', 'api/test', ['name' => 'Sally'])
             ->seeJsonEquals([
-                'resultq' => true
+                'result' => true
             ]);
         $this->assertTrue(true);
     }

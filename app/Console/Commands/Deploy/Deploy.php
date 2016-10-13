@@ -42,26 +42,29 @@ class Deploy extends Command
      */
     public function handle()
     {
-
-        $this->info('Execute migration');
-        Artisan::call('migrate');
-
         $this->info('git pull');
         exec('git checkout master');
         exec('git pull');
+        exec('composer dump-autoload');
+
+        $this->info('Execute migration');
+        Artisan::call('migrate');
 
         $this->info('run php tests');
         $test = new Process('phpunit --color=always');
         $test->run();
         $response = $test->getOutput();
-        if(strpos($response, 'FAILURES!') !== false){
+        if (strpos($response, 'FAILURES!') !== false) {
             $this->error('Unit test failed!');
             $this->info($response);
 
-            $this->info('git pull');
-            exec('git checkout master');
-            exec('git pull');
-        }else{
+            $this->info('git pull rollback');
+//            exec('git reset --hard');
+            exec('composer dump-autoload');
+
+            $this->info('Execute migration rollback');
+            Artisan::call('migrate');
+        } else {
             $this->info('Caching routes, providers');
             Artisan::call('route:cache');
 
