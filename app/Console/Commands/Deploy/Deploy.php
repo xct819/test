@@ -4,6 +4,7 @@ namespace App\Console\Commands\Deploy;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Process\Process;
 
 class Deploy extends Command
 {
@@ -45,15 +46,32 @@ class Deploy extends Command
         $this->info('Execute migration');
         Artisan::call('migrate');
 
-        $this->info('Caching routes, providers');
-        Artisan::call('route:cache');
+        $this->info('git pull');
+        exec('git checkout master');
+        exec('git pull');
 
-        $this->info('Caching config');
-        Artisan::call('config:cache');
+        $this->info('run php tests');
+        $test = new Process('phpunit --color=always');
+        $test->run();
+        $response = $test->getOutput();
+        if(strpos($response, 'FAILURES!') !== false){
+            $this->error('Unit test failed!');
+            $this->info($response);
 
-        $this->info('Optimizing framework');
-        Artisan::call('optimize');
+            $this->info('git pull');
+            exec('git checkout master');
+            exec('git pull');
+        }else{
+            $this->info('Caching routes, providers');
+            Artisan::call('route:cache');
 
-        exec('composer dump-autoload');
+            $this->info('Caching config');
+            Artisan::call('config:cache');
+
+            $this->info('Optimizing framework');
+            Artisan::call('optimize');
+
+            exec('composer dump-autoload');
+        }
     }
 }

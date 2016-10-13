@@ -13,4 +13,4 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::get('/user', 'Test@test');
+Route::get('/test', 'Test@test');

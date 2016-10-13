@@ -11,9 +11,12 @@ class ExampleTest extends TestCase
      *
      * @return void
      */
-    public function testBasicExample()
+    public function test()
     {
-        $this->visit('/')
-             ->see('Laravel');
+        $this->json('GET', 'api/test', ['name' => 'Sally'])
+            ->seeJsonEquals([
+                'resultq' => true
+            ]);
+        $this->assertTrue(true);
     }
 }
